@@ -7,6 +7,7 @@ from scipy.interpolate import griddata
 import numpy as np
 from const import MyConst
 import array as array
+from aux_func1 import *
 # -----------------------------------------------------------
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -19,13 +20,11 @@ cx = np.arange(25)
 cx=MyConst.a_Si/MyConst.ab*cx*0.5
 
 pth = os.path.dirname(os.getcwd())
-print pth
 EigVec1 = scipy.io.loadmat(pth+'/dis_scr/M'+str(indi)+'.mat')
 kk = EigVec1['kk']
 Nbands = EigVec1['Nbands']
 bands = EigVec1['bands']
 
-print Nbands
 
 EEE = EigVec1['a1']/40
 EigVec1 = EigVec1['EigVec1']
@@ -50,7 +49,7 @@ for jj1 in xrange(3):
 
     for jj3 in xrange(Nbands):
 
-        print jj3
+        print(jj3)
 
         a = []
         a = np.where(
@@ -103,24 +102,24 @@ Ff = np.zeros(Nbands,6,Nbands,6,Nbands,6,Nbands,6)
 Ff_c = np.zeros(Nbands,6,Nbands,6,Nbands,6,Nbands,6)
 
 for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
-    print j1
+    print(j1)
     st1,v1,st2,v2 = mat3ind_v(j1,Nbands)
     for st3 in xrange(Nbands):
         for st4 in xrange(Nbands):
             if v1==v2:
                 for v3 in xrange(6):
 
-                    j2=ind3mat_v(st3,v3,st4,v3,Nbands,'nonsym');
+                    j2=ind3mat_v(st3,v3,st4,v3,Nbands,'nonsym')
 
                     if (~np.isnan(j2))&(Ff(st1,v1,st2,v2,st3,v3,st4,v3)==0):
 
                         Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
-                                np.squeeze(M1(st1,fix((v1-1)/2)+1,:,:,:))*np.squeeze(M1(st2,fix((v2-1)/2)+1,:,:,:)),\
-                                [fix(ap/2) fix(ap/2) fix(ap/2)]))))))*np.power(x[3]-x[2],3)
+                                np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
+                                [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
 
                         Ff2 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
-                                np.squeeze(M1(st3,fix((v3-1)/2)+1,:,:,:))*np.squeeze(M1(st4,fix((v3-1)/2)+1,:,:,:)),\
-                                [fix(ap/2) fix(ap/2) fix(ap/2)]))))))*np.power(x[3]-x[2],3)
+                                np.squeeze(M1[st3,v3//2,:,:,:])*np.squeeze(M1[st4,v3//2,:,:,:]),\
+                                [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
 
                         Ff[st1,v1,st2,v2,st3,v3,st4,v3]=el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
 
@@ -132,7 +131,7 @@ for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
                         Ff[st1,v1,st2,v1,st4,v3,st3,v3]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
                         Ff[st3,v3,st4,v3,st2,v1,st1,v1]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
 
-                        Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]=el2int_c(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1].*Ff2[c1:c2,c1:c2,c1:c2],Rc)
+                        Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]=el2int_c(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2],Rc)
 
                         Ff_c[st3,v3,st4,v3,st1,v1,st2,v1]=Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]
                         Ff_c[st2,v1,st1,v1,st4,v3,st3,v3]=Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]
@@ -146,23 +145,31 @@ for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
                 #                 j2=ind3mat_v(st3,v2,st4,v1,Nbands,'nonsym');
                 #                 j2
                 #                 if ~isnan(j2)
-                if Ff(st1,v1,st2,v2,st3,v2,st4,v1)==0
+                if (Ff[st1,v1,st2,v2,st3,v2,st4,v1]==0):
 
-                    Ff1=((ifftshift(fftn(fftshift(padarray(squeeze(M1(st1,fix((v1-1)/2)+1,:,:,:)).*squeeze(M1(st2,fix((v2-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
-                    Ff2=((ifftshift(fftn(fftshift(padarray(squeeze(M1(st3,fix((v2-1)/2)+1,:,:,:)).*squeeze(M1(st4,fix((v1-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
-                    Ff(st1,v1,st2,v2,st3,v2,st4,v1)=el2int(x1,Ff1(c2:-1:c1,c2:-1:c1,c2:-1:c1).*Ff2(c1:c2,c1:c2,c1:c2));
+                    Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                        np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
+                            [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
 
-                    Ff(st3,v2,st4,v1,st1,v1,st2,v2)=Ff(st1,v1,st2,v2,st3,v2,st4,v1);
-                    Ff(st2,v2,st1,v1,st4,v1,st3,v2)=Ff(st1,v1,st2,v2,st3,v2,st4,v1);
-                    Ff(st4,v1,st3,v2,st2,v2,st1,v1)=Ff(st1,v1,st2,v2,st3,v2,st4,v1);
-                    Ff(st2,v2,st1,v1,st3,v2,st4,v1)=Ff(st1,v1,st2,v2,st3,v2,st4,v1);
-                    Ff(st4,v1,st3,v2,st1,v1,st2,v2)=Ff(st1,v1,st2,v2,st3,v2,st4,v1);
-                    Ff(st1,v1,st2,v2,st4,v1,st3,v3)=Ff(st1,v1,st2,v2,st3,v2,st4,v1);
-                    Ff(st3,v2,st4,v1,st2,v2,st1,v1)=Ff(st1,v1,st2,v2,st3,v2,st4,v1);
+
+                    Ff2 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                        np.squeeze(M1[st3,v2//2,:,:,:])*np.squeeze(M1[st4,v1//2,:,:,:]),\
+                        [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
+
+
+                    Ff[st1,v1,st2,v2,st3,v2,st4,v1] = el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
+
+                    Ff[st3,v2,st4,v1,st1,v1,st2,v2]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
+                    Ff[st2,v2,st1,v1,st4,v1,st3,v2]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
+                    Ff[st4,v1,st3,v2,st2,v2,st1,v1]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
+                    Ff[st2,v2,st1,v1,st3,v2,st4,v1]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
+                    Ff[st4,v1,st3,v2,st1,v1,st2,v2]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
+                    Ff[st1,v1,st2,v2,st4,v1,st3,v3]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
+                    Ff[st3,v2,st4,v1,st2,v2,st1,v1]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
 
                 #-----------------------------------------------------------------------
 
-                if Ff(st1,v1,st2,v2,st3,v2,st4,v1)==0
+                if (Ff[st1,v1,st2,v2,st3,v2,st4,v1]==0):
 
                     Ff1=((ifftshift(fftn(fftshift(padarray(squeeze(M1(st1,fix((v1-1)/2)+1,:,:,:)).*squeeze(M1(st2,fix((v2-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
                     Ff2=((ifftshift(fftn(fftshift(padarray(squeeze(M1(st3,fix((k_inv(v1)-1)/2)+1,:,:,:)).*squeeze(M1(st4,fix((k_inv(v2)-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
