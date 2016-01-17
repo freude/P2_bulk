@@ -3,7 +3,6 @@
 import scipy.io
 import os
 from coordsys import CoordSys
-from invdisttree import Invdisttree
 from scipy.interpolate import griddata
 import numpy as np
 from const import MyConst
@@ -93,7 +92,7 @@ M = []
 ap = 200
 Rc = 5.9
 
-x1 = np.fft.fftfreq(cs.coord_sizes+ap, x[3]-x[2])
+x1 = np.fft.fftshift(np.fft.fftfreq(cs.coord_sizes+ap, x[3]-x[2]))
 
 k_tr = 0
 c2 = np.argmin(np.abs(x1-k_tr))
@@ -106,19 +105,24 @@ Ff_c = np.zeros(Nbands,6,Nbands,6,Nbands,6,Nbands,6)
 for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
     print j1
     st1,v1,st2,v2 = mat3ind_v(j1,Nbands)
-    for st3=1:Nbands:
-        for st4=1:Nbands:
+    for st3 in xrange(Nbands):
+        for st4 in xrange(Nbands):
             if v1==v2:
-                for v3=1:6:
+                for v3 in xrange(6):
 
                     j2=ind3mat_v(st3,v3,st4,v3,Nbands,'nonsym');
 
                     if (~np.isnan(j2))&(Ff(st1,v1,st2,v2,st3,v3,st4,v3)==0):
 
-                        Ff1=abs((ifftshift(fftn(fftshift(padarray(squeeze(M1(st1,fix((v1-1)/2)+1,:,:,:)).*squeeze(M1(st2,fix((v2-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
-                        Ff2=abs((ifftshift(fftn(fftshift(padarray(squeeze(M1(st3,fix((v3-1)/2)+1,:,:,:)).*squeeze(M1(st4,fix((v3-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
+                        Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                                np.squeeze(M1(st1,fix((v1-1)/2)+1,:,:,:))*np.squeeze(M1(st2,fix((v2-1)/2)+1,:,:,:)),\
+                                [fix(ap/2) fix(ap/2) fix(ap/2)]))))))*np.power(x[3]-x[2],3)
 
-                        Ff[st1,v1,st2,v2,st3,v3,st4,v3]=el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1].*Ff2[c1:c2,c1:c2,c1:c2])
+                        Ff2 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                                np.squeeze(M1(st3,fix((v3-1)/2)+1,:,:,:))*np.squeeze(M1(st4,fix((v3-1)/2)+1,:,:,:)),\
+                                [fix(ap/2) fix(ap/2) fix(ap/2)]))))))*np.power(x[3]-x[2],3)
+
+                        Ff[st1,v1,st2,v2,st3,v3,st4,v3]=el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
 
                         Ff[st3,v3,st4,v3,st1,v1,st2,v1]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
                         Ff[st2,v1,st1,v1,st4,v3,st3,v3]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
