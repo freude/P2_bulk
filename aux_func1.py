@@ -7,18 +7,31 @@ def el2int(kk,bas_fun):
     integ=np.trapz(np.trapz(np.trapz(bas_fun,dx=kk,axis=2),dx=kk,axis=1),dx=kk,axis=0)/(2*np.power(np.pi,2))/1.0919
     return integ
 
+def el2int_c(kk,bas_fun,R_tr):
+
+    kX, kY, kZ = np.meshgrid(kk,kk,kk)
+
+    Q=np.power(kX,2)+np.power(kY,2)+np.power(kZ,2)
+
+    V = (1-np.cos(np.sqrt(Q)*R_tr))/Q
+    V[np.where(Q==0)] = 0.5*R_tr**2
+
+    integ=np.trapz(np.trapz(np.trapz(bas_fun*V,dx=kk,axis=2),dx=kk,axis=1),dx=kk,axis=0)/(2*np.power(np.pi,2))/1.0919
+
+    return integ
 
 def mat3ind(ind,N):
-    ind=ind+1
-    j=np.arange(N)+1
 
-    di=(2*N-j)/2*(j-1)+j
+    ind = ind+1
+    j = np.arange(N)+1
 
-    i=(ind-di)
-    i = len([np.where(i >= 0)])
-    j=ind-di(i)+i
+    di = (2*N-j)/2*(j-1)+j
 
-    return (i-1,j-1)
+    i = ind - di
+    i = len(i[np.where(i >= 0)])
+    j = ind-di[i-1]+i
+
+    return (i-1, j-1)
 
 
 def ind3mat(i,j,N,str):
@@ -44,6 +57,7 @@ def ind3mat_v(j1,v1,j2,v2,Nbands,fl):
     return ind
 
 def mat3ind_v(ind,Nbands):
+
     p1, q1 = mat3ind(ind,Nbands*6)
 
     val1 = (p1//Nbands)
@@ -52,6 +66,29 @@ def mat3ind_v(ind,Nbands):
     val2 = (q1//Nbands)
     st_ind2 = q1 - Nbands*val2
     return (st_ind1,val1,st_ind2,val2)
+
+def k_inv(k):
+
+    if (k==1):
+        kk=2
+
+    if (k==2):
+        kk=1
+
+    if (k==3):
+        kk=4
+
+    if (k==4):
+        kk=3
+
+    if (k==5):
+        kk=6
+
+    if (k==6):
+        kk=5
+
+    return kk
+
 
 def norb(N):
     return (np.sqrt(1+8*N)-1)/2
@@ -69,4 +106,5 @@ def of(fn):
 
 if __name__ == "__main__":
 
-    print(mat3ind(1, 3))
+    #print(mat3ind(24, [[5]]))
+    print(np.squeeze([[5]]))

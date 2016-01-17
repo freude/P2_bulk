@@ -22,7 +22,7 @@ cx=MyConst.a_Si/MyConst.ab*cx*0.5
 pth = os.path.dirname(os.getcwd())
 EigVec1 = scipy.io.loadmat(pth+'/dis_scr/M'+str(indi)+'.mat')
 kk = EigVec1['kk']
-Nbands = EigVec1['Nbands']
+Nbands = np.squeeze(EigVec1['Nbands'])
 bands = EigVec1['bands']
 
 
@@ -98,12 +98,14 @@ c2 = np.argmin(np.abs(x1-k_tr))
 c1 = np.argmin(np.abs(x1+k_tr))
 x1 = x1[c1:c2]
 
-Ff = np.zeros(Nbands,6,Nbands,6,Nbands,6,Nbands,6)
-Ff_c = np.zeros(Nbands,6,Nbands,6,Nbands,6,Nbands,6)
+Ff = np.zeros((Nbands,6,Nbands,6,Nbands,6,Nbands,6))
+Ff_c = np.zeros((Nbands,6,Nbands,6,Nbands,6,Nbands,6))
 
 for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
     print(j1)
-    st1,v1,st2,v2 = mat3ind_v(j1,Nbands)
+    st1, v1, st2, v2 = mat3ind_v(j1,Nbands)
+    print(j1)
+    print(Nbands)
     for st3 in xrange(Nbands):
         for st4 in xrange(Nbands):
             if v1==v2:
@@ -111,15 +113,15 @@ for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
 
                     j2=ind3mat_v(st3,v3,st4,v3,Nbands,'nonsym')
 
-                    if (~np.isnan(j2))&(Ff(st1,v1,st2,v2,st3,v3,st4,v3)==0):
+                    if (not np.isnan(j2))&(Ff[st1,v1,st2,v2,st3,v3,st4,v3]==0):
 
                         Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
                                 np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
-                                [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
+                                ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
                         Ff2 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
                                 np.squeeze(M1[st3,v3//2,:,:,:])*np.squeeze(M1[st4,v3//2,:,:,:]),\
-                                [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
+                                ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
                         Ff[st1,v1,st2,v2,st3,v3,st4,v3]=el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
 
@@ -149,12 +151,12 @@ for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
 
                     Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
                         np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
-                            [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
+                           ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
 
                     Ff2 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
                         np.squeeze(M1[st3,v2//2,:,:,:])*np.squeeze(M1[st4,v1//2,:,:,:]),\
-                        [ap//2, ap//2, ap//2]))))))*np.power(x[3]-x[2],3)
+                       ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
 
                     Ff[st1,v1,st2,v2,st3,v2,st4,v1] = el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
@@ -171,78 +173,96 @@ for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
 
                 if (Ff[st1,v1,st2,v2,st3,v2,st4,v1]==0):
 
-                    Ff1=((ifftshift(fftn(fftshift(padarray(squeeze(M1(st1,fix((v1-1)/2)+1,:,:,:)).*squeeze(M1(st2,fix((v2-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
-                    Ff2=((ifftshift(fftn(fftshift(padarray(squeeze(M1(st3,fix((k_inv(v1)-1)/2)+1,:,:,:)).*squeeze(M1(st4,fix((k_inv(v2)-1)/2)+1,:,:,:)),[fix(ap/2) fix(ap/2) fix(ap/2)])))))).*((x(3)-x(2))^3);
-                    Ff(st1,v1,st2,v2,st3,v2,st4,v1)=el2int(x1,Ff1(c2:-1:c1,c2:-1:c1,c2:-1:c1).*Ff2(c1:c2,c1:c2,c1:c2));
+                    Ff1 = ((np.ifftshift(np.fftn(np.fftshift(np.pad(\
+                        np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
+                       ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
-                    Ff(st3,k_inv(v1),st4,k_inv(v2),st1,v1,st2,v2)=Ff(st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2));
-                    Ff(st2,v2,st1,v1,st4,k_inv(v2),st3,k_inv(v1))=Ff(st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2));
-                    Ff(st4,k_inv(v2),st3,k_inv(v1),st2,v2,st1,v1)=Ff(st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2));
-                    Ff(st2,v2,st1,v1,st3,k_inv(v1),st4,k_inv(v2))=Ff(st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2));
-                    Ff(st4,k_inv(v2),st3,k_inv(v1),st1,v1,st2,v2)=Ff(st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2));
-                    Ff(st1,v1,st2,v2,st4,k_inv(v2),st3,k_inv(v1))=Ff(st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2));
-                    Ff(st3,k_inv(v1),st4,k_inv(v2),st2,v2,st1,v1)=Ff(st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2));
+                    Ff2 = ((np.ifftshift(np.fftn(np.fftshift(np.pad(\
+                        np.squeeze(M1[st3,k_inv(v1)//2,:,:,:])*np.squeeze(M1[st4,k_inv(v2)//2,:,:,:]),\
+                       ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
+
+                    Ff[st1,v1,st2,v2,st3,v2,st4,v1] = el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
+
+                    Ff[st3,k_inv(v1),st4,k_inv(v2),st1,v1,st2,v2]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
+                    Ff[st2,v2,st1,v1,st4,k_inv(v2),st3,k_inv(v1)]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
+                    Ff[st4,k_inv(v2),st3,k_inv(v1),st2,v2,st1,v1]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
+                    Ff[st2,v2,st1,v1,st3,k_inv(v1),st4,k_inv(v2)]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
+                    Ff[st4,k_inv(v2),st3,k_inv(v1),st1,v1,st2,v2]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
+                    Ff[st1,v1,st2,v2,st4,k_inv(v2),st3,k_inv(v1)]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
+                    Ff[st3,k_inv(v1),st4,k_inv(v2),st2,v2,st1,v1]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
 
 
-#Ff=real(Ff);
-#
+Ff = np.real(Ff)
+
+##
+
+Gg = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I1 = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I2 = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I3 = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I4 = np.zeros((6,6,6,6,np.power(Nbands,4)))
+M_lim = np.zeros((6,6,6,6))
+
+Gg_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I1_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I2_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I3_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
+I4_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
+M_lim_c = np.zeros((6,6,6,6))
+
+for v1 in xrange(6):
+    for v2 in xrange(6):
+        for v3 in xrange(6):
+            for v4 in xrange(6):
+
+                A = np.squeeze(Ff[:,v1,:,v2,:,v3,:,v4])
+                B = np.sort(np.abs(A.ravel))
+                IND = np.argsort(np.abs(A.ravel))
+                B = B[::-1]
+                IND = IND[::-1]
+
+                C = B[np.where(B>0.1)]
+
+                I1[v1,v2,v3,v4,:], I2[v1,v2,v3,v4,:],\
+                    I3[v1,v2,v3,v4,:], I4[v1,v2,v3,v4,:] =\
+                    np.unravel_index(IND, (Nbands, Nbands, Nbands, Nbands))
+
+                Gg[v1,v2,v3,v4,:] = B
+
+                if not C:
+                    M_lim[v1,v2,v3,v4] = 0
+                else:
+                    M_lim[v1,v2,v3,v4] = len(C)
+
+
+                A=np.squeeze(Ff_c[:,v1,:,v2,:,v3,:,v4])
+                B = np.sort(np.abs(A.ravel))
+                IND = np.argsort(np.abs(A.ravel))
+                B = B[::-1]
+                IND = IND[::-1]
+
+                C = B[np.where(B>0.1)]
+
+                I1_c[v1,v2,v3,v4,:], I2_c[v1,v2,v3,v4,:],\
+                    I3_c[v1,v2,v3,v4,:], I4_c[v1,v2,v3,v4,:] =\
+                    np.unravel_index(IND, (Nbands, Nbands, Nbands, Nbands))
+
+                Gg_c[v1,v2,v3,v4,:] = B
+
+                if not C:
+                    M_lim_c[v1,v2,v3,v4] = 0
+                else:
+                    M_lim_c[v1,v2,v3,v4] = len(C)
+
 ###
-#
-#Gg=zeros(6,6,6,6,Nbands^4);
-#I1=zeros(6,6,6,6,Nbands^4);
-#I2=zeros(6,6,6,6,Nbands^4);
-#I3=zeros(6,6,6,6,Nbands^4);
-#I4=zeros(6,6,6,6,Nbands^4);
-#M_lim=zeros(6,6,6,6);
-#
-#Gg_c=zeros(6,6,6,6,Nbands^4);
-#I1_c=zeros(6,6,6,6,Nbands^4);
-#I2_c=zeros(6,6,6,6,Nbands^4);
-#I3_c=zeros(6,6,6,6,Nbands^4);
-#I4_c=zeros(6,6,6,6,Nbands^4);
-#M_lim_c=zeros(6,6,6,6);
-#
-#for v1=1:6
-#    for v2=1:6
-#        for v3=1:6
-#            for v4=1:6
-#                A=squeeze(Ff(:,v1,:,v2,:,v3,:,v4));
-#                [B,IND]=sort(abs(A(:)),'descend');
-#                C=B(B>0.1);
-#                [I1(v1,v2,v3,v4,:),I2(v1,v2,v3,v4,:),I3(v1,v2,v3,v4,:),I4(v1,v2,v3,v4,:)] = ind2sub([Nbands,Nbands,Nbands,Nbands],IND);
-#                Gg(v1,v2,v3,v4,:)=B;
-#                if isempty(C)
-#                    M_lim(v1,v2,v3,v4)=0;
-#                else
-#                    M_lim(v1,v2,v3,v4)=length(C);
-#                end;
-#
-#
-#                A=squeeze(Ff_c(:,v1,:,v2,:,v3,:,v4));
-#                [B,IND]=sort(abs(A(:)),'descend');
-#                C=B(B>0.1);
-#                [I1_c(v1,v2,v3,v4,:),I2_c(v1,v2,v3,v4,:),I3_c(v1,v2,v3,v4,:),I4_c(v1,v2,v3,v4,:)] = ind2sub([Nbands,Nbands,Nbands,Nbands],IND);
-#                Gg_c(v1,v2,v3,v4,:)=B;
-#                if isempty(C)
-#                    M_lim_c(v1,v2,v3,v4)=0;
-#                else
-#                    M_lim_c(v1,v2,v3,v4)=length(C);
-#                end;
-#
-#            end;
-#        end;
-#    end;
-#end;
-#
-###
-#num_bs=24;
-#ind_len = ind3mat(num_bs,num_bs,num_bs,'sym');
-#
-#
-#num_el=40;
-#[tab,num_el]=u_tab(num_el);
-#integ=zeros(ind_len,ind_len);
-#
+
+num_bs = 24
+ind_len = ind3mat(num_bs,num_bs,num_bs,'sym')
+
+num_el = 40
+tab, num_el = u_tab(num_el)
+integ = np.zeros((ind_len, ind_len))
+
 #for jj1=1:ind_len
 #     for jj2=1:ind_len
 #        if jj2>=jj1
