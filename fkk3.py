@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
-indi=17;
-sav_e='yes';
+indi=17
+sav_e='yes'
 
 cx = np.arange(25)
 cx=MyConst.a_Si/MyConst.ab*cx*0.5
@@ -144,7 +144,7 @@ for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
                         Ff_c[st3,v3,st4,v3,st2,v1,st1,v1]=Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]
 
             else:
-                #                 j2=ind3mat_v(st3,v2,st4,v1,Nbands,'nonsym');
+                #                 j2=ind3mat_v(st3,v2,st4,v1,Nbands,'nonsym')
                 #                 j2
                 #                 if ~isnan(j2)
                 if (Ff[st1,v1,st2,v2,st3,v2,st4,v1]==0):
@@ -263,132 +263,119 @@ num_el = 40
 tab, num_el = u_tab(num_el)
 integ = np.zeros((ind_len, ind_len))
 
-#for jj1=1:ind_len
-#     for jj2=1:ind_len
-#        if jj2>=jj1
-#            [j1_1,j3_1]=mat3ind(jj1,num_bs);
-#            [j1_2,j3_2]=mat3ind(jj2,num_bs);
-#
-#            for v1=1:6
-#                for v2=1:6
-#
-#                    if v1==v2
-#
-#                        for v3=1:6
-#                            if M_lim(v1,v2,v3,v3)~=0
-#                                Ff_1=0;
-#                                Ff_2=0;
-#                                for jjj=1:max([M_lim(v1,v2,v3,v3) M_lim_c(v1,v2,v3,v3)])
-#                                    Ff_1=Ff_1+fl.fl(fix((v1-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((v3-1)/2)+1).*fl.fl(fix((v3-1)/2)+1).*...
-#                                            conj(EigVec1(I1(v1,v2,v3,v3,jjj)+Nbands*(v1-1),j1_1)).*...
-#                                                 EigVec1(I2(v1,v2,v3,v3,jjj)+Nbands*(v2-1),j3_1).*...
-#                                            conj(EigVec1(I3(v1,v2,v3,v3,jjj)+Nbands*(v3-1),j1_2)).*...
-#                                                 EigVec1(I4(v1,v2,v3,v3,jjj)+Nbands*(v3-1),j3_2).*Gg(v1,v2,v3,v3,jjj);
-#
-#                                    Ff_2=Ff_2+fl.fl(fix((v1-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((v3-1)/2)+1).*fl.fl(fix((v3-1)/2)+1).*...
-#                                        conj(EigVec1(I1_c(v1,v2,v3,v3,jjj)+Nbands*(v1-1),j1_1)).*...
-#                                                 EigVec1(I2_c(v1,v2,v3,v3,jjj)+Nbands*(v2-1),j3_1).*...
-#                                            conj(EigVec1(I3_c(v1,v2,v3,v3,jjj)+Nbands*(v3-1),j1_2)).*...
-#                                                 EigVec1(I4_c(v1,v2,v3,v3,jjj)+Nbands*(v3-1),j3_2).*Gg_c(v1,v2,v3,v3,jjj);
-#
-#                                end;
-#
-#                                for j1=1:num_el(v1,v2)
-#                                    if sqrt(tab(v1,v2,j1,1)^2+tab(v1,v2,j1,2)^2+tab(v1,v2,j1,3)^2)==0
-#                                        u1=tab(v1,v2,j1,4)+1i*tab(v1,v2,j1,5);
-#                                        integ(jj1,jj2)=integ(jj1,jj2)+u1.*u1.*Ff_2;
-#                                    else
-#                                        u1=tab(v1,v2,j1,4)+1i*tab(v1,v2,j1,5);
-#                                        u2=u_i(v3,v3,[tab(v1,v2,j1,1) tab(v1,v2,j1,2) tab(v1,v2,j1,3)],tab);
-#                                        Q=(kk(v2,1)-kk(v1,1)+tab(v1,v2,j1,1)).^2+...
-#                                            (kk(v2,2)-kk(v1,2)+tab(v1,v2,j1,2)).^2+...
-#                                            (kk(v2,3)-kk(v1,3)+tab(v1,v2,j1,3)).^2;
-#
-#                                        V=(1-cos(sqrt(Q).*Rc))./Q;
-#
-#                                        integ(jj1,jj2)=integ(jj1,jj2)+u1.*u2.*Ff_1*V;
-#                                    end;
-#                                end;
-#                            end;
-#
-#                        end;
-#
-#                    else
-#                        Ff_1=0;
-#                        for jjj=1:M_lim(v1,v2,v2,v1)
-#                            Ff_1=Ff_1+fl.fl(fix((v1-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((v1-1)/2)+1).*...
-#                                conj(EigVec1(I1(v1,v2,v2,v1,jjj)+Nbands*(v1-1),j1_1)).*...
-#                                EigVec1(I2(v1,v2,v2,v1,jjj)+Nbands*(v2-1),j3_1).*...
-#                                conj(EigVec1(I3(v1,v2,v2,v1,jjj)+Nbands*(v2-1),j1_2)).*...
-#                                EigVec1(I4(v1,v2,v2,v1,jjj)+Nbands*(v1-1),j3_2).*Gg(v1,v2,v2,v1,jjj);
-#                        end;
-#                        for j1=1:num_el(v1,v2)
-#                            u1=u_i(v2,v1,[tab(v1,v2,j1,1) tab(v1,v2,j1,2) tab(v1,v2,j1,3)],tab);
-#                            u2=tab(v1,v2,j1,4)+1i*tab(v1,v2,j1,5);
-#
-#                            Q=(kk(v2,1)-kk(v1,1)+tab(v1,v2,j1,1)).^2+...
-#                                (kk(v2,2)-kk(v1,2)+tab(v1,v2,j1,2)).^2+...
-#                                (kk(v2,3)-kk(v1,3)+tab(v1,v2,j1,3)).^2;
-#
-#                            V=(1-cos(sqrt(Q).*Rc))./Q;
-#
-#                            integ(jj1,jj2)=integ(jj1,jj2)+u1.*u2.*Ff_1*V;
-#                        end;
-#                        Ff_1=0;
-#                        for jjj=1:M_lim(v1,v2,k_inv(v1),k_inv(v2))
-#                            Ff1=Ff1+fl.fl(fix((v1-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((k_inv(v1)-1)/2)+1).*fl.fl(fix((k_inv(v2)-1)/2)+1).*...
-#                                conj(EigVec1(I1(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(v1-1),j1_1)).*...
-#                                EigVec1(I2(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(v2-1),j3_1).*...
-#                                conj(EigVec1(I3(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(k_inv(v1)-1),j1_2)).*...
-#                                EigVec1(I4(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(k_inv(v2)-1),j3_2).*Gg(v1,v2,k_inv(v1),k_inv(v2),jjj);
-#                        end;
-#                        for j1=1:num_el(v1,v2)
-#                            u1=u_i(k_inv(v1),k_inv(v2),[tab(v1,v2,j1,1) tab(v1,v2,j1,2) tab(v1,v2,j1,3)],tab);
-#                            u2=tab(v1,v2,j1,4)+1i*tab(v1,v2,j1,5);
-#
-#                            Q=(kk(v2,1)-kk(v1,1)+tab(v1,v2,j1,1)).^2+...
-#                                (kk(v2,2)-kk(v1,2)+tab(v1,v2,j1,2)).^2+...
-#                                (kk(v2,3)-kk(v1,3)+tab(v1,v2,j1,3)).^2;
-#
-#                            V=(1-cos(sqrt(Q).*Rc))./Q;
-#
-#                            integ(jj1,jj2)=integ(jj1,jj2)+u1.*u2.*Ff_1*V;
-#                        end;
-#
-#                    end;
-#                end;
-#            end;
-#
-#        else
-#            integ(jj1,jj2)=integ(jj2,jj1);
-#        end;
-#
-#    end;
-#end;
-#
+for jj1 in xrange(ind_len):
+    for jj2 in xrange(ind_len):
+        if (jj2>=jj1):
+
+            j1_1, j3_1 = mat3ind(jj1,num_bs)
+            j1_2, j3_2 = mat3ind(jj2,num_bs)
+
+            for v1 in xrange(6):
+                for v2 in xrange(6):
+
+                    if (v1==v2):
+
+                        for v3 in xrange(6):
+                            if (M_lim[v1,v2,v3,v3]!=0):
+                                Ff_1=0
+                                Ff_2=0
+
+                                for jjj in xrange(np.max([M_lim(v1,v2,v3,v3), M_lim_c(v1,v2,v3,v3)])):
+                                    Ff_1 = Ff_1 + fl[v1//2]*fl[v2//2]*fl[v3//2]*fl[v3//2]*\
+                                            np.conj(EigVec1[I1[v1,v2,v3,v3,jjj]+Nbands*v1,j1_1])*\
+                                                    EigVec1[I2[v1,v2,v3,v3,jjj]+Nbands*v2,j3_1]*\
+                                            np.conj(EigVec1[I3[v1,v2,v3,v3,jjj]+Nbands*v3,j1_2])*\
+                                                    EigVec1[I4[v1,v2,v3,v3,jjj]+Nbands*v3,j3_2]*Gg[v1,v2,v3,v3,jjj]
+
+                                    Ff_2 = Ff_2 + fl[v1//2]*fl[v2//2]*fl[v3//2]*fl[v3//2]*\
+                                            np.conj(EigVec1[I1_c[v1,v2,v3,v3,jjj]+Nbands*v1,j1_1])*\
+                                                    EigVec1[I2_c[v1,v2,v3,v3,jjj]+Nbands*v2,j3_1]*\
+                                            np.conj(EigVec1[I3_c[v1,v2,v3,v3,jjj]+Nbands*v3,j1_2])*\
+                                                    EigVec1[I4_c[v1,v2,v3,v3,jjj]+Nbands*v3,j3_2]*Gg_c[v1,v2,v3,v3,jjj]
+
+
+                                for j1 in xrange(num_el[v1,v2]):
+                                    if np.sqrt(tab[v1,v2,j1,1]**2+tab[v1,v2,j1,2]**2+tab[v1,v2,j1,3]**2)==0:
+                                        u1 = tab[v1,v2,j1,4]+1j*tab[v1,v2,j1,5]
+                                        integ[jj1,jj2] = integ[jj1,jj2]+u1*u1*Ff_2
+                                    else:
+                                        u1 = tab[v1,v2,j1,4]+1j*tab[v1,v2,j1,5]
+                                        u2 = u_i(v3,v3,(tab[v1,v2,j1,1], tab[v1,v2,j1,2], tab[v1,v2,j1,3]),tab)
+                                        Q = (kk[v2,1]-kk[v1,1]+tab[v1,v2,j1,1])**2+\
+                                            (kk[v2,2]-kk[v1,2]+tab[v1,v2,j1,2])**2+\
+                                            (kk[v2,3]-kk[v1,3]+tab[v1,v2,j1,3])**2
+
+                                        V = (1-np.cos(np,sqrt(Q)*Rc))/Q
+
+                                        integ[jj1,jj2] = integ[jj1,jj2]+u1*u2*Ff_1*V
+
+                    else:
+                        Ff_1=0
+                        for jjj=1 M_lim(v1,v2,v2,v1):
+                            Ff_1=Ff_1+fl.fl(fix((v1-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((v1-1)/2)+1).*...
+                                conj(EigVec1(I1(v1,v2,v2,v1,jjj)+Nbands*(v1-1),j1_1)).*...
+                                EigVec1(I2(v1,v2,v2,v1,jjj)+Nbands*(v2-1),j3_1).*...
+                                conj(EigVec1(I3(v1,v2,v2,v1,jjj)+Nbands*(v2-1),j1_2)).*...
+                                EigVec1(I4(v1,v2,v2,v1,jjj)+Nbands*(v1-1),j3_2).*Gg(v1,v2,v2,v1,jjj)
+
+                        for j1=1 num_el(v1,v2):
+                            u1=u_i(v2,v1,[tab(v1,v2,j1,1) tab(v1,v2,j1,2) tab(v1,v2,j1,3)],tab)
+                            u2=tab(v1,v2,j1,4)+1i*tab(v1,v2,j1,5)
+
+                            Q=(kk(v2,1)-kk(v1,1)+tab(v1,v2,j1,1)).^2+...
+                                (kk(v2,2)-kk(v1,2)+tab(v1,v2,j1,2)).^2+...
+                                (kk(v2,3)-kk(v1,3)+tab(v1,v2,j1,3)).^2
+
+                            V=(1-cos(sqrt(Q).*Rc))./Q
+
+                            integ(jj1,jj2)=integ(jj1,jj2)+u1.*u2.*Ff_1*V
+
+                        Ff_1=0
+                        for jjj in xrange(M_lim[v1,v2,k_inv(v1),k_inv(v2)]):
+                            Ff1=Ff1+fl.fl(fix((v1-1)/2)+1).*fl.fl(fix((v2-1)/2)+1).*fl.fl(fix((k_inv(v1)-1)/2)+1).*fl.fl(fix((k_inv(v2)-1)/2)+1).*...
+                                conj(EigVec1(I1(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(v1-1),j1_1)).*...
+                                EigVec1(I2(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(v2-1),j3_1).*...
+                                conj(EigVec1(I3(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(k_inv(v1)-1),j1_2)).*...
+                                EigVec1(I4(v1,v2,k_inv(v1),k_inv(v2),jjj)+Nbands*(k_inv(v2)-1),j3_2).*Gg(v1,v2,k_inv(v1),k_inv(v2),jjj)
+
+                        for j1 in xrange(num_el[v1,v2]):
+                            u1=u_i(k_inv(v1),k_inv(v2),[tab(v1,v2,j1,1) tab(v1,v2,j1,2) tab(v1,v2,j1,3)],tab)
+                            u2=tab(v1,v2,j1,4)+1i*tab(v1,v2,j1,5)
+
+                            Q=(kk(v2,1)-kk(v1,1)+tab(v1,v2,j1,1)).^2+...
+                                (kk(v2,2)-kk(v1,2)+tab(v1,v2,j1,2)).^2+...
+                                (kk(v2,3)-kk(v1,3)+tab(v1,v2,j1,3)).^2
+
+                            V=(1-cos(sqrt(Q).*Rc))./Q
+
+                            integ(jj1,jj2)=integ(jj1,jj2)+u1.*u2.*Ff_1*V
+
+        else:
+            integ[jj1, jj2] = integ[jj2, jj1]
+
 ###
 #
-#exch=zeros(num_bs,num_bs);
+#exch=zeros(num_bs,num_bs)
 #
 #for j1=1:num_bs
 #    for j2=1:num_bs
-#        exch(j1,j2)=0;
+#        exch(j1,j2)=0
 #        for j3=1:num_bs
-#            jj1=ind3mat(j1,j3,num_bs,'sym');
-#            jj2=ind3mat(j3,j2,num_bs,'sym');
-#            #exch(j1,j2)=exch(j1,j2)-0.5*el2int(bas_fun_ms{1},bas_fun_ms{jj1+1},bas_fun_ms{jj2+1});
-#            exch(j1,j2)=exch(j1,j2)-0.5*abs(integ(jj1,jj2));
-#        end;
-#    end;
-#end;
+#            jj1=ind3mat(j1,j3,num_bs,'sym')
+#            jj2=ind3mat(j3,j2,num_bs,'sym')
+#            #exch(j1,j2)=exch(j1,j2)-0.5*el2int(bas_fun_ms{1},bas_fun_ms{jj1+1},bas_fun_ms{jj2+1})
+#            exch(j1,j2)=exch(j1,j2)-0.5*abs(integ(jj1,jj2))
+#        end
+#    end
+#end
 #
-## exch(find(eye(N)))=exch(find(eye(N)))+EigVec1.a1(1:N)/40;
+## exch(find(eye(N)))=exch(find(eye(N)))+EigVec1.a1(1:N)/40
 #
 #if strcmp(sav_e, 'yes')
-#    # save([pwd,'/dis_scr/bas_fun_ms',num2str(indi),'.mat'], 'bas_fun_ms', '-v7.3');
-#    dlmwrite([pwd,'/dis_scr/!E',num2str(indi),'.dat'], EEE, 'delimiter', ' ');
-#    dlmwrite([pwd,'/dis_scr/!int2e',num2str(indi),'.dat'], abs(integ), 'delimiter', ' ');
-#    dlmwrite([pwd,'/dis_scr/!exch',num2str(indi),'.dat'], abs(exch), 'delimiter', ' ');
+#    # save([pwd,'/dis_scr/bas_fun_ms',num2str(indi),'.mat'], 'bas_fun_ms', '-v7.3')
+#    dlmwrite([pwd,'/dis_scr/!E',num2str(indi),'.dat'], EEE, 'delimiter', ' ')
+#    dlmwrite([pwd,'/dis_scr/!int2e',num2str(indi),'.dat'], abs(integ), 'delimiter', ' ')
+#    dlmwrite([pwd,'/dis_scr/!exch',num2str(indi),'.dat'], abs(exch), 'delimiter', ' ')
 #    save([pwd,'/dis_scr/ws',num2str(indi),'.mat'],'Ff','-v7.3')
-#end;
+#end
 #
