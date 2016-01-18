@@ -20,6 +20,18 @@ def el2int_c(kk,bas_fun,R_tr):
 
     return integ
 
+def u_i(j1,j2,G,tab):
+
+    s = tab.shape
+    tab_i = 0
+
+    for j in xrange(s[3]):
+
+        if (tab[j1,j2,j,0]==-G[0])&(tab[j1,j2,j,1]==-G[1])&(tab[j1,j2,j,2]==-G[2]):
+            tab_i=tab[j1,j2,j,3]+1j*tab[j1,j2,j,4]
+
+    return tab_i
+
 def mat3ind(ind,N):
 
     ind = ind+1
