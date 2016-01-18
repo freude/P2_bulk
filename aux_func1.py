@@ -118,5 +118,6 @@ def of(fn):
 
 if __name__ == "__main__":
 
-    #print(mat3ind(24, [[5]]))
-    print(np.squeeze([[5]]))
+    print(ind3mat_v(0,5,0,5,1,'sym'))
+    print(mat3ind_v(20, 1))
+    print(mat3ind(20, 6))

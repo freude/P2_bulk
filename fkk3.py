@@ -104,21 +104,23 @@ def fkk3():
     Ff = np.zeros((Nbands,6,Nbands,6,Nbands,6,Nbands,6))
     Ff_c = np.zeros((Nbands,6,Nbands,6,Nbands,6,Nbands,6))
 
-    for j1 in xrange(ind3mat_v(Nbands,6,Nbands,6,Nbands,'sym')):
+    for j1 in xrange(ind3mat_v(Nbands-1,5,Nbands-1,5,Nbands,'sym')):
         print(j1)
         st1, v1, st2, v2 = mat3ind_v(j1,Nbands)
         for st3 in xrange(Nbands):
             for st4 in xrange(Nbands):
+
                 if v1==v2:
+
+                    Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                            np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
+                            ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
+
                     for v3 in xrange(6):
 
                         j2=ind3mat_v(st3,v3,st4,v3,Nbands,'nonsym')
 
                         if (not np.isnan(j2))&(Ff[st1,v1,st2,v2,st3,v3,st4,v3]==0):
-
-                            Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
-                                    np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
-                                    ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
                             Ff2 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
                                     np.squeeze(M1[st3,v3//2,:,:,:])*np.squeeze(M1[st4,v3//2,:,:,:]),\
@@ -148,6 +150,7 @@ def fkk3():
                     #                 j2=ind3mat_v(st3,v2,st4,v1,Nbands,'nonsym')
                     #                 j2
                     #                 if ~isnan(j2)
+                    print st1,v1,st2,v2,st3,v2,st4,v1
                     if (Ff[st1,v1,st2,v2,st3,v2,st4,v1]==0):
 
                         Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
