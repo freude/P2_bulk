@@ -81,23 +81,23 @@ def mat3ind_v(ind,Nbands):
 
 def k_inv(k):
 
-    if (k==1):
-        kk=2
-
-    if (k==2):
+    if (k==0):
         kk=1
 
-    if (k==3):
-        kk=4
+    if (k==1):
+        kk=0
 
-    if (k==4):
+    if (k==2):
         kk=3
 
-    if (k==5):
-        kk=6
+    if (k==3):
+        kk=2
 
-    if (k==6):
+    if (k==4):
         kk=5
+
+    if (k==5):
+        kk=4
 
     return kk
 
