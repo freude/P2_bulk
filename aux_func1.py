@@ -2,9 +2,11 @@
 
 import numpy as np
 import sys
+import pdb
+
 
 def el2int(kk,bas_fun):
-    integ=np.trapz(np.trapz(np.trapz(bas_fun,dx=kk,axis=2),dx=kk,axis=1),dx=kk,axis=0)/(2*np.power(np.pi,2))/1.0919
+    integ=np.trapz(np.trapz(np.trapz(bas_fun,dx=kk,axis=2),dx=kk,axis=1),dx=kk,axis=0)/(2*(np.pi**2))/1.0919
     return integ
 
 def el2int_c(kk,bas_fun,R_tr):
@@ -34,16 +36,20 @@ def u_i(j1,j2,G,tab):
 
 def mat3ind(ind,N):
 
-    ind = ind+1
-    j = np.arange(N)+1
-
-    di = (2*N-j)/2*(j-1)+j
-
-    i = ind - di
-    i = len(i[np.where(i >= 0)])
-    j = ind-di[i-1]+i
-
-    return (i-1, j-1)
+    a=np.where(np.reshape(np.cumsum(\
+                np.triu(np.ones((N,N))))-1,(N,N))*np.triu(np.ones((N,N)))==ind)
+    print a
+#    ind = ind+1
+#    j = np.arange(N)+1
+#
+#    di = (2*N-j)/2*(j-1)+j
+#
+#    i = ind - di
+#    i = len(i[np.where(i >= 0)])
+#    j = ind-di[i-1]+i
+    i = a[0]
+    j = a[1]
+    return (i.item(0), j.item(0))
 
 
 def ind3mat(i,j,N,str):
@@ -118,6 +124,7 @@ def of(fn):
 
 if __name__ == "__main__":
 
-    print(ind3mat_v(0,5,0,5,1,'sym'))
-    print(mat3ind_v(20, 1))
-    print(mat3ind(20, 6))
+#    print(ind3mat_v(0,5,0,5,1,'sym'))
+  #  print(mat3ind_v(14, 1))
+     #print(ind3mat_v(0,5,0,5,1,'sym'))
+     print(mat3ind(0, 1))

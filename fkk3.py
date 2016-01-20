@@ -12,8 +12,10 @@ from aux_func1 import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
+import pdb
 
-@profile
+
+#@profile
 def fkk3():
     indi=17
     sav_e='no'
@@ -72,11 +74,11 @@ def fkk3():
             M = griddata(X1, F1, (X, Y, Z), method='linear')
             M[np.isnan(M)] = 0
 
-            #fig = plt.figure()
-            #ax = fig.add_subplot(111, projection='3d')
-            #ax.plot_surface(X[:,:,81],Y[:,:,81],M[:,:,81], cmap=cm.jet, linewidth=0.2)
-            #plt.hold(True)
-            #plt.show()
+           # fig = plt.figure()
+           # ax = fig.add_subplot(111, projection='3d')
+           # ax.plot_surface(X[:,:,81],Y[:,:,81],M[:,:,81], cmap=cm.jet, linewidth=0.2)
+           # plt.hold(True)
+           # plt.show()
             M1[jj3,jj1,:,:,:] = fl[0,jj1]*M
 
     #############################################################
@@ -96,10 +98,18 @@ def fkk3():
 
     x1 = np.fft.fftshift(np.fft.fftfreq(cs.coord_sizes+ap, x[3]-x[2]))
 
-    k_tr = 0
+    print(x1)
+
+    k_tr = 1
     c2 = np.argmin(np.abs(x1-k_tr))
     c1 = np.argmin(np.abs(x1+k_tr))
     x1 = x1[c1:c2]
+    dx1 = x1[2]-x1[1]
+
+    print(c1)
+    print(c2)
+
+    pdb.set_trace()
 
     Ff = np.zeros((Nbands,6,Nbands,6,Nbands,6,Nbands,6))
     Ff_c = np.zeros((Nbands,6,Nbands,6,Nbands,6,Nbands,6))
@@ -107,14 +117,14 @@ def fkk3():
     for j1 in xrange(ind3mat_v(Nbands-1,5,Nbands-1,5,Nbands,'sym')):
         print(j1)
         st1, v1, st2, v2 = mat3ind_v(j1,Nbands)
+        print(st1, v1, st2, v2)
+        Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
+                ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
         for st3 in xrange(Nbands):
             for st4 in xrange(Nbands):
 
                 if v1==v2:
-
-                    Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
-                            np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
-                            ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
                     for v3 in xrange(6):
 
@@ -126,7 +136,7 @@ def fkk3():
                                     np.squeeze(M1[st3,v3//2,:,:,:])*np.squeeze(M1[st4,v3//2,:,:,:]),\
                                     ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
-                            Ff[st1,v1,st2,v2,st3,v3,st4,v3]=el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
+                            Ff[st1,v1,st2,v2,st3,v3,st4,v3]=el2int(dx1,Ff1[c2:c1:-1,c2:c1:-1,c2:c1:-1]*Ff2[c1:c2,c1:c2,c1:c2])
 
                             Ff[st3,v3,st4,v3,st1,v1,st2,v1]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
                             Ff[st2,v1,st1,v1,st4,v3,st3,v3]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
@@ -136,7 +146,7 @@ def fkk3():
                             Ff[st1,v1,st2,v1,st4,v3,st3,v3]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
                             Ff[st3,v3,st4,v3,st2,v1,st1,v1]=Ff[st1,v1,st2,v1,st3,v3,st4,v3]
 
-                            Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]=el2int_c(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2],Rc)
+                            Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]=el2int_c(dx1,Ff1[c2:c1:-1,c2:c1:-1,c2:c1:-1]*Ff2[c1:c2,c1:c2,c1:c2],Rc)
 
                             Ff_c[st3,v3,st4,v3,st1,v1,st2,v1]=Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]
                             Ff_c[st2,v1,st1,v1,st4,v3,st3,v3]=Ff_c[st1,v1,st2,v1,st3,v3,st4,v3]
@@ -153,9 +163,9 @@ def fkk3():
                     print st1,v1,st2,v2,st3,v2,st4,v1
                     if (Ff[st1,v1,st2,v2,st3,v2,st4,v1]==0):
 
-                        Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
-                            np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
-                            ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
+                       # Ff1 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                       #     np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
+                       #     ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
 
                         Ff2 = np.abs((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
@@ -163,7 +173,7 @@ def fkk3():
                         ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
 
-                        Ff[st1,v1,st2,v2,st3,v2,st4,v1] = el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
+                        Ff[st1,v1,st2,v2,st3,v2,st4,v1] = el2int(dx1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
 
                         Ff[st3,v2,st4,v1,st1,v1,st2,v2]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
                         Ff[st2,v2,st1,v1,st4,v1,st3,v2]=Ff[st1,v1,st2,v2,st3,v2,st4,v1]
@@ -175,17 +185,17 @@ def fkk3():
 
                     #-----------------------------------------------------------------------
 
-                    if (Ff[st1,v1,st2,v2,st3,v2,st4,v1]==0):
+                    if (Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]==0):
 
-                        Ff1 = ((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
-                            np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
-                        ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
+                       # Ff1 = ((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
+                       #     np.squeeze(M1[st1,v1//2,:,:,:])*np.squeeze(M1[st2,v2//2,:,:,:]),\
+                       # ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
                         Ff2 = ((np.fft.ifftshift(np.fft.fftn(np.fft.fftshift(np.pad(\
                             np.squeeze(M1[st3,k_inv(v1)//2,:,:,:])*np.squeeze(M1[st4,k_inv(v2)//2,:,:,:]),\
                         ((ap//2, ap//2), (ap//2, ap//2), (ap//2, ap//2)),'constant'))))))*np.power(x[3]-x[2],3)
 
-                        Ff[st1,v1,st2,v2,st3,v2,st4,v1] = el2int(x1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
+                        Ff[st1,v1,st2,v2,st3,v2,st4,v1] = el2int(dx1,Ff1[c2:-1:c1,c2:-1:c1,c2:-1:c1]*Ff2[c1:c2,c1:c2,c1:c2])
 
                         Ff[st3,k_inv(v1),st4,k_inv(v2),st1,v1,st2,v2]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
                         Ff[st2,v2,st1,v1,st4,k_inv(v2),st3,k_inv(v1)]=Ff[st1,v1,st2,v2,st3,k_inv(v1),st4,k_inv(v2)]
@@ -198,20 +208,22 @@ def fkk3():
 
     Ff = np.real(Ff)
 
+    print(Ff.shape)
+
     ##
 
-    Gg = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I1 = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I2 = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I3 = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I4 = np.zeros((6,6,6,6,np.power(Nbands,4)))
+    Gg = np.zeros((6,6,6,6,Nbands*4))
+    I1 = np.zeros((6,6,6,6,Nbands*4))
+    I2 = np.zeros((6,6,6,6,Nbands*4))
+    I3 = np.zeros((6,6,6,6,Nbands*4))
+    I4 = np.zeros((6,6,6,6,Nbands*4))
     M_lim = np.zeros((6,6,6,6))
 
-    Gg_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I1_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I2_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I3_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
-    I4_c = np.zeros((6,6,6,6,np.power(Nbands,4)))
+    Gg_c = np.zeros((6,6,6,6,Nbands*4))
+    I1_c = np.zeros((6,6,6,6,Nbands*4))
+    I2_c = np.zeros((6,6,6,6,Nbands*4))
+    I3_c = np.zeros((6,6,6,6,Nbands*4))
+    I4_c = np.zeros((6,6,6,6,Nbands*4))
     M_lim_c = np.zeros((6,6,6,6))
 
     for v1 in xrange(6):
@@ -220,6 +232,7 @@ def fkk3():
                 for v4 in xrange(6):
 
                     A = np.squeeze(Ff[:,v1,:,v2,:,v3,:,v4])
+                    pdb.set_trace()
                     B = np.sort(np.abs(A.ravel))
                     IND = np.argsort(np.abs(A.ravel))
                     B = B[::-1]
@@ -381,4 +394,6 @@ def fkk3():
 
     return
 
-fkk3()
+if __name__ == "__main__":
+
+    fkk3()
